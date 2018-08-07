@@ -1,0 +1,36 @@
+[MatomoBasicTest]
+name = Matomo basic tests
+description = Test basic functionality of Matomo module.
+group = Matomo
+file = matomo.test
+
+[MatomoCustomVariablesTest]
+name = Matomo Custom Variables tests
+description = Test custom variables functionality of Matomo module.
+group = Matomo
+file = matomo.test
+
+[MatomoCustomUrls]
+name = Matomo custom url tests
+description = Test custom url functionality of Matomo module.
+group = Matomo
+file = matomo.test
+
+[MatomoStatusMessagesTest]
+name = Matomo status messages tests
+description = Test status messages functionality of Matomo module.
+group = Matomo
+file = matomo.test
+
+[MatomoRolesTest]
+name = Matomo role tests
+description = Test roles functionality of Matomo module.
+group = Matomo
+file = matomo.test
+
+[MatomoPhpFilterTest]
+name = Matomo php filter tests
+description = Test php filter functionality of Matomo module.
+group = Matomo
+file = matomo.test
+

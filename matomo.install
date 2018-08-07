@@ -5,10 +5,14 @@
  * Installation file for Matomo Analytics module.
  */
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function matomo_install() {
-  // Remove tracking from all administrative pages, see https://drupal.org/node/34970.
-  variable_set('matomo_visibility_roles', 0);
-  variable_set('matomo_visibility_pages', 0);
+  // Remove tracking from all administrative pages, see http://drupal.org/node/34970.
+  config_set('matomo.settings', 'matomo_visibility_roles', 0);
+  config_set('matomo.settings', 'matomo_visibility_pages', 0);
   $pages = array(
     'admin',
     'admin/*',
@@ -17,44 +21,52 @@ function matomo_install() {
     'node/*/*',
     'user/*/*',
   );
-  variable_set('matomo_pages', implode("\n", $pages));
+  config_set('matomo.settings', 'matomo_pages', implode("\n", $pages));
 
   // Make the default install more user and GDPR friendly.
-  user_role_grant_permissions(DRUPAL_AUTHENTICATED_RID, array('opt-in or out of matomo tracking'));
-  drupal_set_message(t('Module %module granted %permission permission to authenticated users.', array('%module' => 'Matomo Analytics', '%permission' => t('Opt-in or out of tracking'))), 'status');
+  user_role_grant_permissions(BACKDROP_AUTHENTICATED_RID, array('opt-in or out of matomo tracking'));
+  backdrop_set_message(t('Module %module granted %permission permission to authenticated users.', array('%module' => 'Matomo Analytics', '%permission' => t('Opt-in or out of tracking'))), 'status');
+  // Dynamically generated variable data was detected on the following lines.
+  // /matomo/matomo.module line 611
+  // /matomo/matomo.module line 151
+  // /matomo/matomo.module line 203
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function matomo_uninstall() {
-  variable_del('matomo_cache');
-  variable_del('matomo_codesnippet_before');
-  variable_del('matomo_codesnippet_after');
-  variable_del('matomo_custom');
-  variable_del('matomo_custom_var');
-  variable_del('matomo_domain_mode');
-  variable_del('matomo_js_scope');
-  variable_del('matomo_last_cache');
-  variable_del('matomo_page_title_hierarchy');
-  variable_del('matomo_page_title_hierarchy_exclude_home');
-  variable_del('matomo_pages');
-  variable_del('matomo_privacy_donottrack');
-  variable_del('matomo_roles');
-  variable_del('matomo_site_id');
-  variable_del('matomo_site_search');
-  variable_del('matomo_trackcolorbox');
-  variable_del('matomo_trackmailto');
-  variable_del('matomo_track'); // interrims solution
-  variable_del('matomo_trackfiles_extensions');
-  variable_del('matomo_trackmessages');
-  variable_del('matomo_trackuserid');
-  variable_del('matomo_translation_set');
-  variable_del('matomo_url_http');
-  variable_del('matomo_url_https');
-  variable_del('matomo_visibility_pages');
-  variable_del('matomo_visibility_roles');
+  config_clear('matomo.settings', 'matomo_cache');
+  config_clear('matomo.settings', 'matomo_codesnippet_before');
+  config_clear('matomo.settings', 'matomo_codesnippet_after');
+  config_clear('matomo.settings', 'matomo_custom');
+  config_clear('matomo.settings', 'matomo_custom_var');
+  config_clear('matomo.settings', 'matomo_domain_mode');
+  config_clear('matomo.settings', 'matomo_js_scope');
+  config_clear('matomo.settings', 'matomo_last_cache');
+  config_clear('matomo.settings', 'matomo_page_title_hierarchy');
+  config_clear('matomo.settings', 'matomo_page_title_hierarchy_exclude_home');
+  config_clear('matomo.settings', 'matomo_pages');
+  config_clear('matomo.settings', 'matomo_privacy_donottrack');
+  config_clear('matomo.settings', 'matomo_roles');
+  config_clear('matomo.settings', 'matomo_site_id');
+  config_clear('matomo.settings', 'matomo_site_search');
+  config_clear('matomo.settings', 'matomo_trackcolorbox');
+  config_clear('matomo.settings', 'matomo_trackmailto');
+  config_clear('matomo.settings', 'matomo_track'); // interrims solution
+  config_clear('matomo.settings', 'matomo_trackfiles_extensions');
+  config_clear('matomo.settings', 'matomo_trackmessages');
+  config_clear('matomo.settings', 'matomo_trackuserid');
+  config_clear('matomo.settings', 'matomo_translation_set');
+  config_clear('matomo.settings', 'matomo_url_http');
+  config_clear('matomo.settings', 'matomo_url_https');
+  config_clear('matomo.settings', 'matomo_visibility_pages');
+  config_clear('matomo.settings', 'matomo_visibility_roles');
 
   // Remove backup variables if exits. Remove this code in D8.
-  variable_del('matomo_codesnippet_before_backup_7202');
-  variable_del('matomo_codesnippet_after_backup_7202');
+  config_clear('matomo.settings', 'matomo_codesnippet_before_backup_7202');
+  config_clear('matomo.settings', 'matomo_codesnippet_after_backup_7202');
 }
 
 /**
@@ -65,7 +77,7 @@ function matomo_disable() {
 }
 
 /**
- * Implementation of hook_requirements().
+ * Implements hook_requirements().
  */
 function matomo_requirements($phase) {
   $requirements = array();
@@ -74,17 +86,18 @@ function matomo_requirements($phase) {
   switch ($phase) {
     case 'runtime':
       // Module cannot validate matomo URL without external HTTP requests.
-      if (variable_get('drupal_http_request_fails', TRUE) && !system_check_http_request()) {
+      // TODO This variable was probably removed in Backdrop without replacement.
+      if (variable_get('backdrop_http_request_fails', TRUE) && !system_check_http_request()) {
         $requirements['matomo_http_requests'] = array(
           'title' => $t('HTTP request status'),
           'value' => $t('Fails'),
           'severity' => REQUIREMENT_ERROR,
-          'description' => $t('Your system or network configuration does not allow Drupal to access web pages, resulting in reduced functionality. This could be due to your webserver configuration or PHP settings, and should be resolved in order to download information about available updates, fetch aggregator feeds, sign in via OpenID, or use other network-dependent services.'),
+          'description' => $t('Your system or network configuration does not allow Backdrop to access web pages, resulting in reduced functionality. This could be due to your webserver configuration or PHP settings, and should be resolved in order to download information about available updates, fetch aggregator feeds, sign in via OpenID, or use other network-dependent services.'),
         );
       }
 
       // Raise warning if Matomo user account has not been set yet.
-      if (!preg_match('/^\d{1,}$/', variable_get('matomo_site_id', ''))) {
+      if (!preg_match('/^\d{1,}$/', config_get('matomo.settings', 'matomo_site_id'))) {
         $requirements['matomo'] = array(
           'title' => $t('Matomo module'),
           'description' => $t('Matomo module has not been configured yet. Please configure its settings from the <a href="@url">Matomo settings page</a>.', array('@url' => url('admin/config/system/matomo'))),
@@ -95,6 +108,72 @@ function matomo_requirements($phase) {
       break;
   }
   return $requirements;
+}
+
+/**
+ * Implements hook_update_last_removed().
+ */
+function matomo_update_last_removed() {
+  return;
+}
+
+/**
+ * Implements hook_update_N().
+ */
+function matomo_update_1000() {
+  $config = config('matomo.settings');
+  $config->set('matomo_site_id', update_variable_get('matomo_site_id', ''));
+  $config->set('matomo_url_http', update_variable_get('matomo_url_http', ''));
+  $config->set('matomo_url_https', update_variable_get('matomo_url_https', ''));
+  $config->set('matomo_domain_mode', update_variable_get('matomo_domain_mode', 'novalue'));
+  $config->set('matomo_visibility_pages', update_variable_get('matomo_visibility_pages', 'novalue'));
+  $config->set('matomo_pages', update_variable_get('matomo_pages', 'MATOMO_PAGES'));
+  $config->set('matomo_visibility_roles', update_variable_get('matomo_visibility_roles', 'novalue'));
+  $config->set('matomo_roles', update_variable_get('matomo_roles', 'dynamic value in file /matomo/matomo.module line 611'));
+  $config->set('matomo_custom', update_variable_get('matomo_custom', '1'));
+  $config->set('matomo_trackuserid', update_variable_get('matomo_trackuserid', 'novalue'));
+  $config->set('matomo_trackmailto', update_variable_get('matomo_trackmailto', '1'));
+  $config->set('matomo_track', update_variable_get('matomo_track', '1'));
+  $config->set('matomo_trackfiles_extensions', update_variable_get('matomo_trackfiles_extensions', 'MATOMO_TRACKFILES_EXTENSIONS'));
+  $config->set('matomo_trackcolorbox', update_variable_get('matomo_trackcolorbox', '1'));
+  $config->set('matomo_trackmessages', update_variable_get('matomo_trackmessages', 'dynamic value in file /matomo/matomo.module line 151'));
+  $config->set('matomo_site_search', update_variable_get('matomo_site_search', 'FALSE'));
+  $config->set('matomo_privacy_donottrack', update_variable_get('matomo_privacy_donottrack', '1'));
+  $config->set('matomo_page_title_hierarchy', update_variable_get('matomo_page_title_hierarchy', 'FALSE'));
+  $config->set('matomo_page_title_hierarchy_exclude_home', update_variable_get('matomo_page_title_hierarchy_exclude_home', 'TRUE'));
+  $config->set('matomo_custom_var', update_variable_get('matomo_custom_var', 'dynamic value in file /matomo/matomo.module line 203'));
+  $config->set('matomo_cache', update_variable_get('matomo_cache', 'novalue'));
+  $config->set('matomo_translation_set', update_variable_get('matomo_translation_set', 'novalue'));
+  $config->set('matomo_codesnippet_before', update_variable_get('matomo_codesnippet_before', ''));
+  $config->set('matomo_codesnippet_after', update_variable_get('matomo_codesnippet_after', ''));
+  $config->set('matomo_js_scope', update_variable_get('matomo_js_scope', 'header'));
+  $config->set('matomo_last_cache', update_variable_get('matomo_last_cache', 'novalue'));
+  update_variable_del('matomo_site_id');
+  update_variable_del('matomo_url_http');
+  update_variable_del('matomo_url_https');
+  update_variable_del('matomo_domain_mode');
+  update_variable_del('matomo_visibility_pages');
+  update_variable_del('matomo_pages');
+  update_variable_del('matomo_visibility_roles');
+  update_variable_del('matomo_roles');
+  update_variable_del('matomo_custom');
+  update_variable_del('matomo_trackuserid');
+  update_variable_del('matomo_trackmailto');
+  update_variable_del('matomo_track');
+  update_variable_del('matomo_trackfiles_extensions');
+  update_variable_del('matomo_trackcolorbox');
+  update_variable_del('matomo_trackmessages');
+  update_variable_del('matomo_site_search');
+  update_variable_del('matomo_privacy_donottrack');
+  update_variable_del('matomo_page_title_hierarchy');
+  update_variable_del('matomo_page_title_hierarchy_exclude_home');
+  update_variable_del('matomo_custom_var');
+  update_variable_del('matomo_cache');
+  update_variable_del('matomo_translation_set');
+  update_variable_del('matomo_codesnippet_before');
+  update_variable_del('matomo_codesnippet_after');
+  update_variable_del('matomo_js_scope');
+  update_variable_del('matomo_last_cache');
 }
 
 /**
